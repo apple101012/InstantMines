@@ -35,10 +35,17 @@ h1 {
 
 .control-panel input,
 .control-panel select {
-  padding: 5px;
-  margin-top: 5px;
-  border-radius: 4px;
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 8px;
   border: none;
+  background-color: #1e293b; /* Dark navy blue */
+  color: #f8fafc; /* Light text */
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 250px; /* Limit width on large screens */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .control-panel button {
@@ -50,6 +57,14 @@ h1 {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
+}
+.control-panel label,
+.control-panel > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #facc15; /* Gold color for label text */
+  font-weight: bold;
 }
 
 .control-panel button:disabled {
@@ -165,4 +180,83 @@ h1 {
 .odds-table thead {
   background-color: #0f172a;
   color: #f9fafb;
+}
+
+/* ───── MOBILE SUPPORT ───── */
+@media (max-width: 768px) {
+  .app {
+    padding: 10px;
+  }
+
+  .control-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .control-panel label {
+    width: 100%;
+  }
+
+  .game-area {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .board {
+    grid-template-columns: repeat(5, 50px);
+    grid-template-rows: repeat(5, 50px);
+  }
+
+  .cell {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+
+  .cashout-panel {
+    font-size: 0.9em;
+    padding: 8px;
+  }
+
+  .odds-table {
+    width: 100%;
+    max-height: none;
+    overflow: auto;
+  }
+
+  .odds-table table {
+    font-size: 0.9em;
+  }
+
+  .end-text {
+    font-size: 1.1em;
+  }
+  .control-panel input,
+  .control-panel select {
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: none;
+    background-color: #1e293b;
+    color: #f8fafc;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 250px; /* ✅ This limits the width */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .control-panel input:focus,
+  .control-panel select:focus {
+    outline: 2px solid #38bdf8;
+    background-color: #0f172a;
+  }
+  .control-panel label,
+  .control-panel > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
