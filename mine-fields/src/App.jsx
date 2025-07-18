@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import odds from "./odds";
 import "./App.css";
 
@@ -12,14 +12,14 @@ const generateBombs = (bombCount) => {
 };
 
 export default function App() {
-  const [startBalance, setStartBalance] = useState(50);
-  const [balance, setBalance] = useState(startBalance);
+  const [startBalance, setStartBalance] = useState(100);
+  const [balance, setBalance] = useState(100);
   const [bet, setBet] = useState(10);
   const [mines, setMines] = useState(3);
   const [board, setBoard] = useState(Array(25).fill(null));
   const [bombPositions, setBombPositions] = useState([]);
   const [revealed, setRevealed] = useState([]);
-  const [gameState, setGameState] = useState("idle"); // idle, playing, won, lost
+  const [gameState, setGameState] = useState("idle");
 
   const diamondsClicked = revealed.length;
   const multiplier = getMultiplier(diamondsClicked, mines);
@@ -46,6 +46,7 @@ export default function App() {
     setBoard(Array(25).fill(null));
     setRevealed([]);
     setBombPositions([]);
+    setBalance(startBalance);
   };
 
   const handleClick = (index) => {
@@ -53,10 +54,9 @@ export default function App() {
 
     if (bombPositions.includes(index)) {
       const newBoard = [...board];
-      bombPositions.forEach((pos) => {
-        newBoard[pos] = "💣";
+      bombPositions.forEach((b) => {
+        newBoard[b] = "💣";
       });
-
       setBoard(newBoard);
       setGameState("lost");
     } else {
@@ -70,20 +70,15 @@ export default function App() {
   const handleCashOut = () => {
     const payout = bet * multiplier;
     setBalance((prev) => prev + payout);
-    setGameState("won");
-
-    // Reveal all bombs visually
     const newBoard = [...board];
-    bombPositions.forEach((index) => {
-      if (newBoard[index] === null) newBoard[index] = "💣";
+    bombPositions.forEach((b) => {
+      newBoard[b] = "💣";
     });
     setBoard(newBoard);
+    setGameState("won");
   };
 
-  const applyStartBalance = () => {
-    setBalance(startBalance);
-    resetGame();
-  };
+  const filteredOdds = odds.filter((o) => o.bomb === mines);
 
   return (
     <div className="app">
@@ -91,31 +86,30 @@ export default function App() {
 
       <div className="control-panel">
         <div>
-          💰 Balance: ${balance.toFixed(2)}
-          <br />
+          Start Balance: $
           <input
             type="number"
             value={startBalance}
             onChange={(e) => setStartBalance(parseFloat(e.target.value))}
-            style={{ width: "100px", marginRight: "10px" }}
+            disabled={gameState === "playing"}
           />
-          <button onClick={applyStartBalance}>Set Balance</button>
         </div>
-
+        <div>💰 Balance: ${balance.toFixed(2)}</div>
         <label>
           Bet:
           <input
             type="number"
             value={bet}
             onChange={(e) => setBet(parseFloat(e.target.value))}
+            disabled={gameState === "playing"}
           />
         </label>
-
         <label>
           Mines:
           <select
             value={mines}
             onChange={(e) => setMines(parseInt(e.target.value))}
+            disabled={gameState === "playing"}
           >
             {Array.from({ length: 24 }, (_, i) => (
               <option key={i + 1} value={i + 1}>
@@ -124,12 +118,16 @@ export default function App() {
             ))}
           </select>
         </label>
-
-        <button onClick={startGame} disabled={gameState === "playing"}>
-          Start Game
+        <button
+          onClick={startGame}
+          disabled={gameState === "playing"}
+          className="start-btn"
+        >
+          ▶️ Start Game
         </button>
-
-        <button onClick={resetGame}>Reset</button>
+        <button onClick={resetGame} className="reset-btn">
+          🔁 Reset
+        </button>
       </div>
 
       {gameState === "playing" && (
@@ -145,22 +143,48 @@ export default function App() {
         </div>
       )}
 
-      <div className="board">
-        {board.map((value, i) => {
-          let className = "cell";
-          if (value === "💣") className += " bomb";
-          else if (value === "💎") className += " diamond";
+      <div className="game-area">
+        <div className="board">
+          {board.map((value, i) => {
+            let className = "cell";
+            if (value === "💣") className += " bomb";
+            else if (value === "💎") className += " diamond";
 
-          return (
-            <div key={i} className={className} onClick={() => handleClick(i)}>
-              {value}
-            </div>
-          );
-        })}
+            return (
+              <div key={i} className={className} onClick={() => handleClick(i)}>
+                {value}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="odds-table">
+          <h3>📊 Odds for {mines} Mines</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>💎 Diamonds</th>
+                <th>💥 Mines</th>
+                <th>🎯 Chance</th>
+                <th>📈 Multiplier</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOdds.map((o, idx) => (
+                <tr key={`${o.bomb}-${o.diamonds}-${idx}`}>
+                  <td>{o.diamonds}</td>
+                  <td>{o.bomb}</td>
+                  <td>{o.chance.toFixed(2)}</td>
+                  <td>{o.multiplier.toFixed(2)}x</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {gameState === "lost" && (
-        <div className="end-text">💣 You hit a bomb! Game over.</div>
+        <div className="end-text">💥 You hit a bomb! Game over.</div>
       )}
       {gameState === "won" && (
         <div className="end-text">

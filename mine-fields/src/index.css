@@ -1,148 +1,167 @@
 body {
   margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #111;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  padding: 40px;
+  font-family: Arial, sans-serif;
+  background-color: #0f172a;
+  color: #f8fafc;
 }
 
 .app {
-  text-align: center;
-  max-width: 600px;
-  width: 100%;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
 }
 
 h1 {
-  font-size: 2rem;
+  text-align: center;
   margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
+  color: #38bdf8;
 }
 
 .control-panel {
-  background-color: #222;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-panel label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  color: #fcd34d;
 }
 
 .control-panel input,
 .control-panel select {
-  background: #333;
-  color: #fff;
-  border: 1px solid #444;
-  padding: 5px 10px;
+  padding: 5px;
+  margin-top: 5px;
   border-radius: 4px;
+  border: none;
 }
 
 .control-panel button {
-  padding: 6px 12px;
-  background-color: #555;
-  color: #fff;
+  padding: 8px 12px;
   border: none;
   border-radius: 6px;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background-color 0.2s;
 }
 
-.control-panel button:hover {
-  background-color: #777;
+.control-panel button:disabled {
+  background-color: #475569;
+  cursor: not-allowed;
+}
+
+.control-panel button:hover:not(:disabled) {
+  background-color: #2563eb;
 }
 
 .cashout-panel {
-  margin-bottom: 15px;
-  background: #1c1c1c;
+  text-align: center;
+  margin-bottom: 20px;
+  background-color: #1e293b;
+  padding: 10px;
   border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
 }
 
 .cashout-btn {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 8px 14px;
+  background-color: #22c55e;
+  padding: 10px 16px;
   border-radius: 6px;
+  margin-top: 10px;
+  color: white;
   font-weight: bold;
+  border: none;
   cursor: pointer;
 }
 
 .cashout-btn:hover {
-  background-color: #34c759;
+  background-color: #16a34a;
+}
+
+.game-area {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(5, 60px);
   grid-template-rows: repeat(5, 60px);
-  gap: 8px;
-  justify-content: center;
-  margin-top: 20px;
 }
 
 .cell {
   width: 60px;
   height: 60px;
-  background-color: #333;
-  border-radius: 6px;
+  background-color: #334155;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 26px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 1.4rem;
-  user-select: none;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s;
 }
 
 .cell:hover {
-  background-color: #444;
-}
-
-.cell.diamond {
-  background-color: #00c853;
-  color: #fff;
+  background-color: #475569;
 }
 
 .cell.bomb {
-  background-color: #d32f2f;
-  color: #fff;
+  background-color: #ef4444;
+  color: white;
+}
+
+.cell.diamond {
+  background-color: #22d3ee;
+  color: black;
 }
 
 .end-text {
   margin-top: 20px;
-  font-size: 1.2rem;
-  color: #fdd835;
-}
-button {
-  padding: 10px 16px;
-  margin: 6px;
-  border: none;
-  border-radius: 8px;
-  background-color: #444;
-  color: white;
+  text-align: center;
+  font-size: 1.3em;
+  color: #f87171;
   font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
-button:hover:not(:disabled) {
-  background-color: #666;
+.odds-table {
+  background-color: #1e293b;
+  padding: 10px;
+  border-radius: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  min-width: 240px;
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.odds-table h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #facc15;
+  text-align: center;
+}
+
+.odds-table table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+.odds-table th,
+.odds-table td {
+  border: 1px solid #334155;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.odds-table thead {
+  background-color: #0f172a;
+  color: #f9fafb;
 }
