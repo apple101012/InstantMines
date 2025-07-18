@@ -126,3 +126,23 @@ h1 {
   font-size: 1.2rem;
   color: #fdd835;
 }
+button {
+  padding: 10px 16px;
+  margin: 6px;
+  border: none;
+  border-radius: 8px;
+  background-color: #444;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #666;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

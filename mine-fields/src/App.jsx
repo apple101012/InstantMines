@@ -8,18 +8,18 @@ const generateBombs = (bombCount) => {
     const pos = Math.floor(Math.random() * 25);
     positions.add(pos);
   }
-  console.log("[generateBombs] Bomb positions:", positions);
   return Array.from(positions);
 };
 
 export default function App() {
-  const [balance, setBalance] = useState(1000);
+  const [startBalance, setStartBalance] = useState(50);
+  const [balance, setBalance] = useState(startBalance);
   const [bet, setBet] = useState(10);
   const [mines, setMines] = useState(3);
   const [board, setBoard] = useState(Array(25).fill(null));
   const [bombPositions, setBombPositions] = useState([]);
   const [revealed, setRevealed] = useState([]);
-  const [gameState, setGameState] = useState("idle");
+  const [gameState, setGameState] = useState("idle"); // idle, playing, won, lost
 
   const diamondsClicked = revealed.length;
   const multiplier = getMultiplier(diamondsClicked, mines);
@@ -29,23 +29,16 @@ export default function App() {
     const entry = odds.find(
       (o) => o.diamonds === diamondCount && o.bomb === bombCount
     );
-    console.log(
-      `[getMultiplier] Diamonds: ${diamondCount}, Bombs: ${bombCount}, Multiplier: ${
-        entry ? entry.multiplier : "1.0 (default)"
-      }`
-    );
     return entry ? entry.multiplier : 1.0;
   }
 
   const startGame = () => {
     if (bet <= 0 || bet > balance) return alert("Invalid bet");
     setBalance((prev) => prev - bet);
-    const bombs = generateBombs(mines);
-    setBombPositions(bombs);
+    setBombPositions(generateBombs(mines));
     setRevealed([]);
     setBoard(Array(25).fill(null));
     setGameState("playing");
-    console.log("[startGame] Game started with bet:", bet, "mines:", mines);
   };
 
   const resetGame = () => {
@@ -53,29 +46,24 @@ export default function App() {
     setBoard(Array(25).fill(null));
     setRevealed([]);
     setBombPositions([]);
-    console.log("[resetGame] Game reset.");
   };
 
   const handleClick = (index) => {
     if (gameState !== "playing" || revealed.includes(index)) return;
 
-    console.log(`[handleClick] Clicked cell: ${index}`);
-
     if (bombPositions.includes(index)) {
-      console.log("[handleClick] Bomb hit!");
       const newBoard = [...board];
-      newBoard[index] = "💥";
+      bombPositions.forEach((pos) => {
+        newBoard[pos] = "💣";
+      });
+
       setBoard(newBoard);
       setGameState("lost");
     } else {
       const newBoard = [...board];
       newBoard[index] = "💎";
       setBoard(newBoard);
-      setRevealed((prev) => {
-        const updated = [...prev, index];
-        console.log("[handleClick] Diamonds clicked:", updated.length);
-        return updated;
-      });
+      setRevealed([...revealed, index]);
     }
   };
 
@@ -83,7 +71,18 @@ export default function App() {
     const payout = bet * multiplier;
     setBalance((prev) => prev + payout);
     setGameState("won");
-    console.log("[handleCashOut] Cashout:", payout);
+
+    // Reveal all bombs visually
+    const newBoard = [...board];
+    bombPositions.forEach((index) => {
+      if (newBoard[index] === null) newBoard[index] = "💣";
+    });
+    setBoard(newBoard);
+  };
+
+  const applyStartBalance = () => {
+    setBalance(startBalance);
+    resetGame();
   };
 
   return (
@@ -91,7 +90,18 @@ export default function App() {
       <h1>💣 Mines Game</h1>
 
       <div className="control-panel">
-        <div>💰 Balance: ${balance.toFixed(2)}</div>
+        <div>
+          💰 Balance: ${balance.toFixed(2)}
+          <br />
+          <input
+            type="number"
+            value={startBalance}
+            onChange={(e) => setStartBalance(parseFloat(e.target.value))}
+            style={{ width: "100px", marginRight: "10px" }}
+          />
+          <button onClick={applyStartBalance}>Set Balance</button>
+        </div>
+
         <label>
           Bet:
           <input
@@ -100,6 +110,7 @@ export default function App() {
             onChange={(e) => setBet(parseFloat(e.target.value))}
           />
         </label>
+
         <label>
           Mines:
           <select
@@ -113,9 +124,11 @@ export default function App() {
             ))}
           </select>
         </label>
+
         <button onClick={startGame} disabled={gameState === "playing"}>
           Start Game
         </button>
+
         <button onClick={resetGame}>Reset</button>
       </div>
 
@@ -135,7 +148,7 @@ export default function App() {
       <div className="board">
         {board.map((value, i) => {
           let className = "cell";
-          if (value === "💥") className += " bomb";
+          if (value === "💣") className += " bomb";
           else if (value === "💎") className += " diamond";
 
           return (
@@ -147,7 +160,7 @@ export default function App() {
       </div>
 
       {gameState === "lost" && (
-        <div className="end-text">💥 You hit a bomb! Game over.</div>
+        <div className="end-text">💣 You hit a bomb! Game over.</div>
       )}
       {gameState === "won" && (
         <div className="end-text">
