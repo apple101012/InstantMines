@@ -1,42 +1,105 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #111;
+  color: #fff;
+  margin: 0;
+  padding: 0;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  background-color: #222;
+  padding: 10px;
+  border-radius: 8px;
 }
 
-.card {
-  padding: 2em;
+.top-bar input,
+.top-bar select {
+  padding: 4px;
+  font-size: 1em;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
 }
 
-.read-the-docs {
-  color: #888;
+button {
+  padding: 8px 16px;
+  font-size: 1em;
+  margin: 8px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.message {
+  font-size: 1.2em;
+  margin: 15px 0;
+  color: #ffc107;
+}
+
+.board {
+  display: grid;
+  grid-template-rows: repeat(12, 1fr);
+  gap: 8px;
+  margin: 20px auto;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  background-color: #333;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cell.safe {
+  background-color: #4caf50; /* green for safe */
+}
+
+.cell.bomb {
+  background-color: #dc3545; /* red for bomb */
+}
+
+.cashout-panel {
+  margin: 15px 0;
+  background-color: #1c1c1c;
+  padding: 10px;
+  border-radius: 6px;
 }

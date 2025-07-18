@@ -1,108 +1,128 @@
-/* App.css */
-
 body {
-  font-family: Arial, sans-serif;
-  background-color: #121212;
-  color: #fff;
   margin: 0;
-  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #111;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  padding: 40px;
 }
 
 .app {
-  max-width: 900px;
-  margin: auto;
-  padding: 20px;
   text-align: center;
+  max-width: 600px;
+  width: 100%;
 }
 
 h1 {
   font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
-.controls {
-  margin-bottom: 1rem;
+.control-panel {
+  background-color: #222;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-select,
-button {
-  font-size: 1rem;
-  padding: 8px 12px;
-  margin-left: 10px;
-  border-radius: 5px;
+.control-panel input,
+.control-panel select {
+  background: #333;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.control-panel button {
+  padding: 6px 12px;
+  background-color: #555;
+  color: #fff;
   border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.control-panel button:hover {
+  background-color: #777;
+}
+
+.cashout-panel {
+  margin-bottom: 15px;
+  background: #1c1c1c;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cashout-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-button {
-  background-color: #1e90ff;
-  color: white;
+.cashout-btn:hover {
+  background-color: #34c759;
 }
 
-button:disabled {
-  background-color: #555;
-  cursor: not-allowed;
-}
-
-.grid {
+.board {
   display: grid;
   grid-template-columns: repeat(5, 60px);
   grid-template-rows: repeat(5, 60px);
   gap: 8px;
   justify-content: center;
-  margin: 20px auto;
+  margin-top: 20px;
 }
 
-.tile {
+.cell {
   width: 60px;
   height: 60px;
-  background-color: #2b2b2b;
-  border: 2px solid #444;
+  background-color: #333;
   border-radius: 6px;
-  font-size: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: 0.2s;
+  font-size: 1.4rem;
+  user-select: none;
+  transition: background-color 0.2s ease;
 }
 
-.tile:hover {
-  background-color: #3a3a3a;
+.cell:hover {
+  background-color: #444;
 }
 
-.tile.revealed {
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
+.cell.diamond {
+  background-color: #00c853;
+  color: #fff;
 }
 
-.odds-table {
-  margin-top: 30px;
-  background: #1a1a1a;
-  padding: 20px;
-  border-radius: 10px;
-  overflow-x: auto;
+.cell.bomb {
+  background-color: #d32f2f;
+  color: #fff;
 }
 
-.odds-table h3 {
-  margin-bottom: 10px;
-  color: #ffd700;
-}
-
-.odds-table table {
-  width: 100%;
-  border-collapse: collapse;
-  color: #ddd;
-}
-
-.odds-table th,
-.odds-table td {
-  border: 1px solid #333;
-  padding: 8px;
-  text-align: center;
-}
-
-.odds-table th {
-  background-color: #333;
+.end-text {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #fdd835;
 }

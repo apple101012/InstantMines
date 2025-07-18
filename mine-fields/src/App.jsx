@@ -1,143 +1,159 @@
-import React, { useState } from "react";
-import { ODDS_TABLE } from "./odds";
+import React, { useState, useEffect } from "react";
+import odds from "./odds";
 import "./App.css";
-import "./index.css";
 
-const GRID_SIZE = 5;
-
-const generateBombs = (numBombs) => {
-  const totalTiles = GRID_SIZE * GRID_SIZE;
-  const bombIndices = new Set();
-  while (bombIndices.size < numBombs) {
-    const idx = Math.floor(Math.random() * totalTiles);
-    bombIndices.add(idx);
+const generateBombs = (bombCount) => {
+  const positions = new Set();
+  while (positions.size < bombCount) {
+    const pos = Math.floor(Math.random() * 25);
+    positions.add(pos);
   }
-  return bombIndices;
+  console.log("[generateBombs] Bomb positions:", positions);
+  return Array.from(positions);
 };
 
-function App() {
-  const [bombCount, setBombCount] = useState(1);
-  const [bombs, setBombs] = useState(new Set());
-  const [revealed, setRevealed] = useState(new Set());
-  const [gameStarted, setGameStarted] = useState(false);
-  const [message, setMessage] = useState("Pick a number of bombs and start!");
-  const [gameOver, setGameOver] = useState(false);
+export default function App() {
+  const [balance, setBalance] = useState(1000);
+  const [bet, setBet] = useState(10);
+  const [mines, setMines] = useState(3);
+  const [board, setBoard] = useState(Array(25).fill(null));
+  const [bombPositions, setBombPositions] = useState([]);
+  const [revealed, setRevealed] = useState([]);
+  const [gameState, setGameState] = useState("idle");
 
-  const handleStart = () => {
-    const newBombs = generateBombs(bombCount);
-    setBombs(newBombs);
-    setRevealed(new Set());
-    setGameStarted(true);
-    setGameOver(false);
-    setMessage("Click tiles to find diamonds 💎");
-  };
+  const diamondsClicked = revealed.length;
+  const multiplier = getMultiplier(diamondsClicked, mines);
+  const cashoutValue = (bet * multiplier).toFixed(2);
 
-  const handleClick = (idx) => {
-    if (!gameStarted || gameOver || revealed.has(idx)) return;
-
-    if (bombs.has(idx)) {
-      setMessage("💣 Boom! You hit a bomb.");
-      setGameOver(true);
-    } else {
-      const newRevealed = new Set(revealed);
-      newRevealed.add(idx);
-      setRevealed(newRevealed);
-
-      const diamondsFound = newRevealed.size;
-      const odds = ODDS_TABLE[bombCount]?.find(
-        (row) => row.diamonds === diamondsFound
-      );
-
-      if (odds) {
-        setMessage(
-          `💎 Safe! Diamonds: ${diamondsFound} | x${odds.multiplier} | ${(
-            odds.chance * 100
-          ).toFixed(2)}% chance`
-        );
-      } else {
-        setMessage("💎 Keep going!");
-      }
-    }
-  };
-
-  const renderGrid = () => {
-    const tiles = [];
-    for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-      const isRevealed = revealed.has(i);
-      const isBomb = bombs.has(i);
-      const content = gameOver && isBomb ? "💣" : isRevealed ? "💎" : "";
-      tiles.push(
-        <div
-          key={i}
-          className={`tile ${isRevealed ? "revealed" : ""}`}
-          onClick={() => handleClick(i)}
-        >
-          {content}
-        </div>
-      );
-    }
-    return tiles;
-  };
-
-  const renderOddsTable = () => {
-    return (
-      <div className="odds-table">
-        <h3>
-          📊 Odds for {bombCount} Bomb{bombCount > 1 ? "s" : ""}
-        </h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Diamonds</th>
-              <th>Multiplier</th>
-              <th>Chance</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(ODDS_TABLE[bombCount] || []).map((row) => (
-              <tr key={row.diamonds}>
-                <td>{row.diamonds}</td>
-                <td>x{row.multiplier}</td>
-                <td>{(row.chance * 100).toFixed(2)}%</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+  function getMultiplier(diamondCount, bombCount) {
+    const entry = odds.find(
+      (o) => o.diamonds === diamondCount && o.bomb === bombCount
     );
+    console.log(
+      `[getMultiplier] Diamonds: ${diamondCount}, Bombs: ${bombCount}, Multiplier: ${
+        entry ? entry.multiplier : "1.0 (default)"
+      }`
+    );
+    return entry ? entry.multiplier : 1.0;
+  }
+
+  const startGame = () => {
+    if (bet <= 0 || bet > balance) return alert("Invalid bet");
+    setBalance((prev) => prev - bet);
+    const bombs = generateBombs(mines);
+    setBombPositions(bombs);
+    setRevealed([]);
+    setBoard(Array(25).fill(null));
+    setGameState("playing");
+    console.log("[startGame] Game started with bet:", bet, "mines:", mines);
+  };
+
+  const resetGame = () => {
+    setGameState("idle");
+    setBoard(Array(25).fill(null));
+    setRevealed([]);
+    setBombPositions([]);
+    console.log("[resetGame] Game reset.");
+  };
+
+  const handleClick = (index) => {
+    if (gameState !== "playing" || revealed.includes(index)) return;
+
+    console.log(`[handleClick] Clicked cell: ${index}`);
+
+    if (bombPositions.includes(index)) {
+      console.log("[handleClick] Bomb hit!");
+      const newBoard = [...board];
+      newBoard[index] = "💥";
+      setBoard(newBoard);
+      setGameState("lost");
+    } else {
+      const newBoard = [...board];
+      newBoard[index] = "💎";
+      setBoard(newBoard);
+      setRevealed((prev) => {
+        const updated = [...prev, index];
+        console.log("[handleClick] Diamonds clicked:", updated.length);
+        return updated;
+      });
+    }
+  };
+
+  const handleCashOut = () => {
+    const payout = bet * multiplier;
+    setBalance((prev) => prev + payout);
+    setGameState("won");
+    console.log("[handleCashOut] Cashout:", payout);
   };
 
   return (
     <div className="app">
-      <h1>💣 Minefield Game</h1>
+      <h1>💣 Mines Game</h1>
 
-      <div className="controls">
+      <div className="control-panel">
+        <div>💰 Balance: ${balance.toFixed(2)}</div>
         <label>
-          Bombs:
+          Bet:
+          <input
+            type="number"
+            value={bet}
+            onChange={(e) => setBet(parseFloat(e.target.value))}
+          />
+        </label>
+        <label>
+          Mines:
           <select
-            value={bombCount}
-            onChange={(e) => setBombCount(parseInt(e.target.value))}
-            disabled={gameStarted}
+            value={mines}
+            onChange={(e) => setMines(parseInt(e.target.value))}
           >
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <option key={n} value={n}>
-                {n}
+            {Array.from({ length: 24 }, (_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}
               </option>
             ))}
           </select>
         </label>
-        <button onClick={handleStart} disabled={gameStarted}>
-          START
+        <button onClick={startGame} disabled={gameState === "playing"}>
+          Start Game
         </button>
+        <button onClick={resetGame}>Reset</button>
       </div>
 
-      <p>{message}</p>
+      {gameState === "playing" && (
+        <div className="cashout-panel">
+          <div>
+            Multiplier: {multiplier.toFixed(2)}x | 💎 Diamonds:{" "}
+            {diamondsClicked}
+          </div>
+          <div>💸 Cashout: ${cashoutValue}</div>
+          <button className="cashout-btn" onClick={handleCashOut}>
+            🪙 Cash Out
+          </button>
+        </div>
+      )}
 
-      <div className="grid">{renderGrid()}</div>
+      <div className="board">
+        {board.map((value, i) => {
+          let className = "cell";
+          if (value === "💥") className += " bomb";
+          else if (value === "💎") className += " diamond";
 
-      {renderOddsTable()}
+          return (
+            <div key={i} className={className} onClick={() => handleClick(i)}>
+              {value}
+            </div>
+          );
+        })}
+      </div>
+
+      {gameState === "lost" && (
+        <div className="end-text">💥 You hit a bomb! Game over.</div>
+      )}
+      {gameState === "won" && (
+        <div className="end-text">
+          💰 You cashed out and won ${cashoutValue}!
+        </div>
+      )}
     </div>
   );
 }
-
-export default App;

@@ -1,4 +1,4 @@
-export const ODDS_TABLE = [
+const odds = [
   // Diamond: 1
   { diamonds: 1, bomb: 1, multiplier: 1.03, chance: 96.1165 },
   { diamonds: 1, bomb: 2, multiplier: 1.08, chance: 91.6667 },
@@ -355,3 +355,5 @@ export const ODDS_TABLE = [
   // Diamond 24
   { diamonds: 24, bombs: 1, multiplier: 24.75, chance: 4 },
 ];
+
+export default odds;
