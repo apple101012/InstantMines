@@ -164,7 +164,6 @@ export default function App() {
             <thead>
               <tr>
                 <th>💎 Diamonds</th>
-                <th>💥 Mines</th>
                 <th>🎯 Chance</th>
                 <th>📈 Multiplier</th>
               </tr>
@@ -173,7 +172,6 @@ export default function App() {
               {filteredOdds.map((o, idx) => (
                 <tr key={`${o.bomb}-${o.diamonds}-${idx}`}>
                   <td>{o.diamonds}</td>
-                  <td>{o.bomb}</td>
                   <td>{o.chance.toFixed(2)}</td>
                   <td>{o.multiplier.toFixed(2)}x</td>
                 </tr>

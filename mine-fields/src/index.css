@@ -86,9 +86,10 @@ h1 {
 
 .game-area {
   display: flex;
-  justify-content: center;
-  gap: 40px;
-  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: nowrap;
 }
 
 .board {
@@ -138,7 +139,7 @@ h1 {
   border-radius: 8px;
   max-height: 400px;
   overflow-y: auto;
-  min-width: 240px;
+  min-width: 300px;
 }
 
 .odds-table h3 {
